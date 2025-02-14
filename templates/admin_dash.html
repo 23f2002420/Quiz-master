@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin</title>
+    <link rel="stylesheet" href="{{url_for('static', filename = 'admin_quizm.css')}}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+</head>
+</head>
+<body>
+    <div id="main">
+        <div class="navbar">
+            <div>
+                <a href="">Home</a>
+                <a href="{{url_for('quiz_management')}}">Quiz</a>
+                <a href="#">Summary</a>
+                <a href="{{ url_for('logout') }}">Logout</a>
+            </div>
+            <div class="search">
+                <form action="{{ url_for('admin_dashboard') }}" method="GET">
+                    <input type="text" name="search_query" placeholder="search" value="{{ search_query }}">
+                    <button type="submit">Search</button>
+                </form>
+            </div>
+            <div>Welcome Admin</div>
+        </div>
+
+        <div class="dashboard">
+            {% for subject in subjects  %}
+            <div class="subject-container">
+                <div class="subject-card">
+                    <h3>{{subject.name}} </h3>
+                <table class="chapter-table">
+                    <tr>
+                        <th>Chapter name</th>
+                        <th>No of questions </th>
+                        <th>Action</th>
+                    </tr>
+                    {% for chapter in subject.chapters %}
+                    <tr>
+                        <td>{{ chapter.name }}</td>
+                        <td>{{chapter.question_count }}</td>
+                        <td>
+                            <a href="{{url_for('edit_chapter', chapter_id = chapter.id)}}" class="btn-btn-primary"><button type="submit" class="btn btn-primary">Edit</button></a>
+                            <a href="{{url_for('delete_chapter', chapter_id = chapter.id)}}" class="btn-btn-primary"><button type="submit" class="btn btn-danger">Delete</button></a>
+                        </td>    
+                    </tr>
+                    {% endfor %}
+                    
+                </table>
+                    <a href="{{url_for('new_chapter', subject_id = subject.id)}}"><button class="add-chapter">Add chapter</button></a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>    
+    <a href="{{url_for('new_subject')}}"><button class="btn-btn-primary"> Add Subject </button></a>
+    </body>
+</html>

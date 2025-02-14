@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Quiz</title>
+    <link rel="stylesheet" href="{{url_for('static', filename = 'view_quiz.css')}}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+</head>
+</head>
+<body>
+    <div class="container mt-5">
+        <h3>View Quiz</h3>
+        <table class="table table-striped">
+            <tr>
+                <th>ID</th>
+                <td>{{quiz.id}}</td>
+            </tr>
+            <tr>
+                <th>Title</th>
+                <td>{{quiz.title}}</td>
+            </tr>
+            
+            <tr>
+                <th>Chapter ID </th>
+                <td>{{quiz.chapter_id}}</td>
+            </tr>
+            
+            <tr>
+                <th>Scheduled Date</th>
+                <td>{{quiz.date_of_quiz.strftime('%d-%m-%Y')}}</td>
+            </tr>
+            <tr>
+                <th>Duration</th>
+                <td>{{quiz.duration}}</td>
+            </tr>
+            <tr>
+                <th>No. of Questions</th>
+                <td>{{quiz.questions|length}}</td>
+            </tr>
+            <tr>
+                <th>Is Active</th>
+                <td>{{ quiz.is_active }}</td>
+            </tr>
+        </table>
+        <a href="{{url_for('user_dashboard', user_id = user_id)}}"><button class="btn btn-secondary">Close</button></a>
+    </div>
+</body>
+</html>
