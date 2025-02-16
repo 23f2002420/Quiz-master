@@ -2,8 +2,15 @@ from flask import Flask, render_template, redirect, request, url_for, session, f
 from flask import current_app as app
 from .models import *
 from datetime import datetime, date
-import matplotlib as plt
+from datetime import timedelta
+import matplotlib
+matplotlib.use('Agg') 
+import matplotlib.pyplot as plt
 import os
+import io 
+import base64
+from sqlalchemy import func
+import pytz
 
 
 # ----Login Part---
@@ -344,17 +351,23 @@ def admin_dashboard():
     search_query = request.args.get('search_query') 
     if search_query:
         subjects = Subject.query.filter(Subject.name.ilike(f"%{search_query}%")).all()
-        quizzes = Quiz.query.filter(Quiz.title.ilike(f"%{search_query}%")).all()
     else:
         subjects = Subject.query.all()
-        quizzes = Quiz.query.all()
+    quizzes = []    
     for subject in subjects:
         chapters =subject.chapters
         for chapter in chapters:
             total_questions = 0
             for quiz in chapter.quizzes:
                 total_questions += len(quiz.questions)
+                if search_query:
+                    if search_query.lower() in quiz.title.lower():
+                        quizzes.append(quiz)
+                    else:
+                        quizzes.append(quiz)    
             chapter.question_count = total_questions
+    if search_query:
+        quizzes = [quiz for quiz in quizzes if search_query.lower() in quiz.title.lower()]       
     return render_template("admin_dash.html", subjects=subjects, quizzes =quizzes, search_query=search_query)
 
 
@@ -380,7 +393,10 @@ def user_dashboard(user_id):
 
     user_scores = user_scores_query.all()
     today = date.today()
-    upcoming_quizzes = Quiz.query.filter(Quiz.date_of_quiz >= today).all()
+    if search_query:
+        upcoming_quizzes = Quiz.query.filter(Quiz.date_of_quiz >= today, Quiz.title.ilike(f"%{search_query}%")).all()
+    else:
+        upcoming_quizzes = Quiz.query.filter(Quiz.date_of_quiz >= today).all()
     return render_template(
         "user_dash.html",
         user=this_user,
@@ -522,57 +538,96 @@ def view_scores(user_id):
 def logout():
     return render_template('login.html')
 
-# def subject_attempt_chart(user_id):
-#     scores = Score.query.filter_by(user_id = user_id).all()
-#     subject_counts ={}
-#     for score in scores:
-#         subject_name = score.quiz.chapter.subject.name
-#         subject_counts[subject_name] = subject_counts.get(subject_name,0) + 1
-#     if not subject_counts:
-#         return None;
-#     subjects = list(subject_counts.keys())
-#     counts = list(subject_counts.values())
-    
-#     plt.figure(figsize = (8,6))
-#     plt.bar(subjects, counts, color="skyblue")
-#     plt.xlabel("Subjects")
-#     plt.ylabel("Number of Attempts")
-#     plt.title("Subject-wise Quiz Attempts")
-#     plt.xticks(rotation =45, ha ='right')
-#     plt.tight_layout()
-    
-#     img_path = os.path.join(app.root_path, 'static', 'img1.png')
-#     plt.save(img_path)
-#     plt.close()
-    
-    
-# def month_wise_attempt_chart(user_if):
-#     scores = Score.query.filter_by(user_id=user_id).all()
-#     month_counts = {}
-#     for score in scores:
-#         month = score.time_stamp_of_attempt.strftime("%B")
-#         month_counts[month] = month_counts.get(month, 0) + 1
 
-#     if not month_counts:
-#         return None
-    
-#     months = list(month_counts.keys())
-#     counts = list(month_counts.values())
+@app.route("/admin_summary")
+def admin_summary():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    this_user =  User.query.get_or_404(session["user_id"])
+    if this_user.is_admin != "admin":
+        return redirect(url_for('login'))
+    chart_image = create_admin_charts()
+    return render_template("admin_summary.html", chart_image = chart_image)
 
-#     plt.figure(figsize=(6, 6))
-#     plt.pie(counts, labels=months, autopct='%1.1f%%', startangle=140)
-#     plt.title("Month-wise Quiz Attempts")
-#     plt.tight_layout()
+def create_admin_charts():
+    subjects = Subject.query.all()
+    subject_scores =[]
+    subject_labels = []
+    for subject in subjects:
+        average_score = db.session.query(func.avg(Score.total_scored)).join(Quiz).join(Chapter).filter(Chapter.subject_id== subject.id).scalar()
+        subject_labels.append(subject.name)
+        subject_scores.append(average_score or 0)
+    subject_attempts = []
+    for subject in subjects:
+        attempt_count = db.session.query(func.count(Score.id)).\
+            join(Quiz).join(Chapter).filter(Chapter.subject_id == subject.id).scalar()
+        subject_attempts.append(attempt_count or 0)  
+        
+    fig, axs = plt.subplots(1, 2, figsize=(12, 6))
+    axs[0].bar(subject_labels, subject_scores)
+    axs[0].set_title('Subject Wise Top Scores')
+    axs[0].set_xlabel('Subjects')
+    axs[0].set_ylabel('Average Score')
+    axs[0].tick_params(axis ="x", rotation =45)
     
-#     img_path = os.path.join(app.root_path, 'static', 'img2.png')
-#     plt.savefig(img_path)
-#     plt.close()
+    axs[1].pie(subject_attempts, labels =subject_labels, autopct = '%1.1f%%', startangle = 90)
+    axs[1].set_title('Subject Wise User Attempts')
     
+    img = io.BytesIO()
+    plt.savefig(img, format = 'png')
+    img.seek(0)
+    plt.close(fig)
+    img_str = base64.b64encode(img.read()).decode('utf-8')
+    return img_str 
+
+@app.route("/user_summary")
+def user_summary():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    user_id = session["user_id"]
+    chart_image = create_user_charts(user_id) 
+    user = User.query.get_or_404(user_id)
+    return render_template("user_summary.html", chart_image=chart_image, user= user)
+
+
+def create_user_charts(user_id):
+    subjects = Subject.query.all()
+    subject_labels = []
+    subject_counts = []
+
+    for subject in subjects:
+        quiz_count = db.session.query(func.count(Score.quiz_id)).\
+            join(Quiz).join(Chapter).filter(Score.user_id == user_id, Chapter.subject_id == subject.id).scalar()
+
+        subject_labels.append(subject.name)
+        subject_counts.append(quiz_count or 0)
+
+    month_labels = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']
+    month_counts = [0] * 12 
+    # Fetch scores for the current user
+    scores = Score.query.filter_by(user_id=user_id).all()
+
+    for score in scores:
+        month = score.time_stamp_of_attempt.strftime("%m")
+        month_index = int(month) - 1 
+        if 0 <= month_index < 12:
+            month_counts[month_index] += 1
+
+    fig, axs = plt.subplots(1, 2, figsize=(12, 6))
     
-# @app.route('/summary')
-# def summary():
-#     user_id = session.get("user_id")
-#     if not user_id:
-#         return redirect(url_for('login'))
-#     return render_template("summary.html")
-    
+    axs[0].bar(subject_labels, subject_counts)
+    axs[0].set_title('Subject-wise Number of Quizzes Attempted')
+    axs[0].set_xlabel('Subjects')
+    axs[0].set_ylabel('Number of Quizzes')
+    axs[0].tick_params(axis='x', rotation=45)
+
+
+    axs[1].pie(month_counts, labels=month_labels, autopct='%1.1f%%', startangle=90)
+    axs[1].set_title('Month-wise Most Quizzes Attempted')
+
+    img = io.BytesIO()
+    plt.savefig(img, format='png')
+    img.seek(0)
+    plt.close(fig)
+    img_str = base64.b64encode(img.read()).decode('utf-8')
+    return img_str

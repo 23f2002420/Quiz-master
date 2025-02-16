@@ -16,7 +16,7 @@
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item"><a class="nav-link" href="{{url_for('user_dashboard', user_id=user_id)}}">Home </a></li>
                     <li class="nav-item"><a class="nav-link" href="{{url_for('view_scores',user_id =user_id)}}">Scores </a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Summary</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{url_for('user_summary', user_id =user.id)}}">Summary</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{url_for('login')}}">Logout </a></li>
                 </ul>
                 <span class="navbar-text">Welcome {{user.username}}</span>
