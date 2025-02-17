@@ -43,7 +43,7 @@
                     <td>{{ quiz.id }}</td>
                     <td>{{ quiz.questions|length }}</td>
                     <td>{{ quiz.date_of_quiz.strftime('%d/%m/%Y')}}</td>
-                    <td>{{ quiz.duration }}</td>
+                    <td>{{ quiz.time_duration }}</td>
                     <td>
                         <a href="{{ url_for('view_quiz', quiz_id = quiz.id) }}"><button class="btn btn-info btn-sm">View</button></a>
                         <a href="{{ url_for('start_quiz', quiz_id = quiz.id) }}"><button class="btn btn-success btn-sm">Start</button></a>                        
