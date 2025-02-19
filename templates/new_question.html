@@ -12,12 +12,10 @@
     <div class="container">
         <h2>New Question</h2>
         <form method="POST" action="{{ url_for('new_question', quiz_id=quiz.id) }}">
-
             <div class="form-group">
                 <label for="question_title">Question Title:</label>
                 <input type="text" id="question_title" name="question_title" class="form-control" required>
             </div>
-
             <div class="options-container">
                 <h3>Single Option Correct</h3>
                 <div class="option">

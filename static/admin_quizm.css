@@ -4,7 +4,6 @@
     box-sizing: border-box;
 }
 
-
 body{
     font-family: Arial,sans-serif;
     margin:0px;
@@ -165,6 +164,10 @@ chapter-table{
     text-align: center;
     margin-top: 20px;
 }
+.all-quizzes{
+    text-align:center;
+    margin-top: 20px;
+}
 
 .btn-add-subject{
     background-color: #007bff;
@@ -179,6 +182,22 @@ chapter-table{
     display: inline-block;
 }
 
+.btn-add-quiz{
+    background-color: #007bff;
+    color:white;
+    border:none;
+    padding: 12px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+    text-decoration:none;
+    display: inline-block;
+}
+
 .btn-add-subject:hover {
     background-color: #0056b3;
+}
+.btn-add-quiz{
+    background-color:#0056b3;
 }

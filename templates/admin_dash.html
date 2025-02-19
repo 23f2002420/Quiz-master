@@ -33,28 +33,35 @@
                 <div class="subject-card">
                     <h3>{{subject.name}} </h3>
                 <table class="chapter-table">
-                    <tr>
-                        <th>Chapter name</th>
-                        <th>No of questions </th>
-                        <th>Action</th>
-                    </tr>
-                    {% for chapter in subject.chapters %}
-                    <tr>
-                        <td>{{ chapter.name }}</td>
-                        <td>{{chapter.question_count }}</td>
-                        <td>
-                            <a href="{{url_for('edit_chapter', chapter_id = chapter.id)}}" class="btn-btn-primary"><button type="submit" class="btn btn-primary">Edit</button></a>
-                            <a href="{{url_for('delete_chapter', chapter_id = chapter.id)}}" class="btn-btn-primary"><button type="submit" class="btn btn-danger">Delete</button></a>
-                        </td>    
-                    </tr>
-                    {% endfor %}
-                    
+                    <thead>
+                        <tr>
+                            <th>Chapter name</th>
+                            <th>No of questions </th>
+                            <th class ="action-header">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>    
+                        {% for chapter in subject.chapters %}
+                        <tr>
+                            <td>{{ chapter.name }}</td>
+                            <td>{{chapter.question_count }}</td>
+                            <td>
+                                <a href="{{url_for('edit_chapter', chapter_id = chapter.id)}}" class="btn-btn-primary"><button type="submit" class="btn btn-primary">Edit</button></a>
+                                <a href="{{url_for('delete_chapter', chapter_id = chapter.id)}}" class="btn-btn-primary"><button type="submit" class="btn btn-danger">Delete</button></a>
+                            </td>    
+                        </tr>
+                        {% endfor %}
+                    </tbody>
                 </table>
+                <div class ="add-chapter-container">
                     <a href="{{url_for('new_chapter', subject_id = subject.id)}}"><button class="add-chapter">Add chapter</button></a>
+                </div>
             </div>
             {% endfor %}
         </div>
-    </div>    
-    <a href="{{url_for('new_subject')}}"><button class="btn-btn-primary"> Add Subject </button></a>
-    </body>
+    </div>
+    <div class = "all-subjects">    
+        <a href="{{url_for('new_subject')}}"><button class="btn-add-subject"> Add Subject </button></a>
+    </div>
+</body>
 </html>

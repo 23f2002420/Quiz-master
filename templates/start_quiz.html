@@ -38,33 +38,38 @@
 </head>
 <body>
     <div class="container mt-5">
-        <h3>Start Quiz</h3>
+        <h3>Start Your Quiz</h3>
         <form method ="POST">
             <div class="d-flex justify-content-between">
                 <span>Q. No: <strong>{{current_question_index }}/{{total_questions}}</strong></span>
                 <span>Time Left: <strong id ="time-left">{{time_left}}</strong></span>
             </div>
-            <div class="card mt-3">
+            <div class="card mt-4">
                 <div class="card-body">
                     <p><strong>Question Title:</strong>{{question.question_title}} </p>
-                    <div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="answer" id="option1" value="1" {% if  selected_answer == "1" %}checked{%endif %}>
-                            <label class="form-check-label" for="option1">{{question.option1}}
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="answer" id="option2" value="2" {% if selected_answer == "2"%}checked{%endif %}>
-                            <label class="form-check-label" for="option2">{{question.option2}}</label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="answer" id="option3" value="3" {% if selected_answer == "3" %}checked{%endif %}>
-                            <label class="form-check-label" for="option3">{{question.option3}}</label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="answer" id="option4" value="4" {% if selected_answer == "4" %}checked{%endif %}>
-                            <label class="form-check-label" for="option4">{{question.option4}}</label>
-                        </div>
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="answer" id="option1" value="1" {% if  selected_answer == "1" %}checked{%endif %}>
+                                    <label class="form-check-label" for="option1">{{question.option1}}</label>
+                                </div>    
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="answer" id="option2" value="2" {% if selected_answer == "2"%}checked{%endif %}>
+                                    <label class="form-check-label" for="option2">{{question.option2}}</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="answer" id="option3" value="3" {% if selected_answer == "3" %}checked{%endif %}>
+                                    <label class="form-check-label" for="option3">{{question.option3}}</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="answer" id="option4" value="4" {% if selected_answer == "4" %}checked{%endif %}>
+                                    <label class="form-check-label" for="option4">{{question.option4}}</label>
+                                </div>
+                            </div> 
+                        </div>       
                     </div>
-                    <div class="mt-3">
+                    <div class="mt-4">
                         <button class="btn btn-primary"type ="submit" name ="action" value="Previous">Previous</button>
                         <button class="btn btn-primary"type ="submit" name ="action" value="next">Save and Next</button>
                         <button class="btn btn-success" type="submit" name = "action" value = "submit">Submit</button>
