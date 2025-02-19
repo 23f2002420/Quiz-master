@@ -341,7 +341,7 @@ def user_dashboard(user_id):
             flash("Invalid date format. Please use YYYY-MM-DD.", "error")
     user_scores = user_scores_query.all()
     today = date.today()
-    upcoming_quizzes = Quiz.query.filter(Quiz.date_of_quiz >= today)
+    upcoming_quizzes = Quiz.query.filter(Quiz.date_of_quiz >= today).options(db.joinedload(Quiz.chapter))
     if search_query:
         upcoming_quizzes = upcoming_quizzes.filter(
             Quiz.title.ilike(f"%{search_query}%")

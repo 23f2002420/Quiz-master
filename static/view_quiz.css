@@ -49,3 +49,10 @@ h3 {
     background-color: #5a6268;
     border-color: #545b62;
 }
+
+.dashboard{
+    padding: 20px;
+    flex-wrap: wrap;
+    justify-content:  flex-start;
+    gap: 20px;
+}

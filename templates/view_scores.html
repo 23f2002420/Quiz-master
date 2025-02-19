@@ -23,27 +23,29 @@
                 </form>
                 <span class="navbar-text">Welcome {{user.username}}</span>
         </nav>
-        <h3>Quiz Scores</h3>
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>No. of Questions</th>
-                    <th>Date</th>
-                    <th>Score</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for score in scores %}
-                <tr>
-                    <td>{{score.quiz_id}}</td>
-                    <td>{{score.quiz.questions|length}}</td>
-                    <td>{{score.quiz.date_of_quiz.strftime('%d-%m-%Y')}}</td>
-                    <td>{{score.total_scored}}/{{score.quiz.questions|length}}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+        <div class="dashboard">
+            <h3>Quiz Scores</h3>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>No. of Questions</th>
+                        <th>Date</th>
+                        <th>Score</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for score in scores %}
+                    <tr>
+                        <td>{{score.quiz_id}}</td>
+                        <td>{{score.quiz.questions|length}}</td>
+                        <td>{{score.quiz.date_of_quiz.strftime('%d-%m-%Y')}}</td>
+                        <td>{{score.total_scored}}/{{score.quiz.questions|length}}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
 </body>
 </html>

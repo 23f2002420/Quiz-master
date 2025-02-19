@@ -22,33 +22,37 @@
                 <span class="navbar-text">Welcome {{user.username}}</span>
         </nav>
         
-
-        <h3>Upcoming Quizzes</h3>
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>No. of Questions</th>
-                    <th>Date</th>
-                    <th>Duration</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for quiz in upcoming_quizzes %}
-                <tr>
-                    <td>{{ quiz.id }}</td>
-                    <td>{{ quiz.questions|length }}</td>
-                    <td>{{ quiz.date_of_quiz.strftime('%d/%m/%Y')}}</td>
-                    <td>{{ quiz.time_duration }}</td>
-                    <td>
-                        <a href="{{ url_for('view_quiz', quiz_id = quiz.id) }}"><button class="btn btn-info btn-sm">View</button></a>
-                        <a href="{{ url_for('start_quiz', quiz_id = quiz.id) }}"><button class="btn btn-success btn-sm">Start</button></a>                        
-                    </td>
-                </tr>
-                {% endfor %}    
-            </tbody>
-        </table>
+        <div class="dashboard">
+            <h3>Upcoming Quizzes</h3>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Chapter</th>
+                        <th>No. of Questions</th>
+                        <th>Date</th>
+                        <th>Duration</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for quiz in upcoming_quizzes %}
+                    <tr>
+                        <td>{{ quiz.id }}</td>
+                        <td> {{quiz.chapter.name}}</td>
+                        <td>{{ quiz.questions|length }}</td>
+                        <td>{{ quiz.date_of_quiz.strftime('%d/%m/%Y')}}</td>
+                        <td>{{ quiz.time_duration }}</td>
+                        
+                        <td>
+                            <a href="{{ url_for('view_quiz', quiz_id = quiz.id) }}"><button class="btn btn-info btn-sm">View</button></a>
+                            <a href="{{ url_for('start_quiz', quiz_id = quiz.id) }}"><button class="btn btn-success btn-sm">Start</button></a>                        
+                        </td>
+                    </tr>
+                    {% endfor %}    
+                </tbody>
+            </table>
+        </div>  
     </div>
 </body>
 </html>

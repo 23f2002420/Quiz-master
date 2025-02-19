@@ -65,6 +65,12 @@ body{
 .navbar button:hover{
     background-color: #0056b3;
 }
+.dashboard{
+    padding: 20px;
+    flex-wrap: wrap;
+    justify-content:  flex-start;
+    gap: 20px;
+}
 
 .btn{
     padding:8px 12px;
@@ -78,6 +84,7 @@ body{
     text-decoration:none;
     display:inline-block;
 }
+
 
 
 
